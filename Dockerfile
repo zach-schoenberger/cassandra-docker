@@ -33,7 +33,9 @@ RUN sed -ri 's/^(JVM_PATCH_VERSION)=.*/\1=25/' /etc/cassandra/cassandra-env.sh
 
 ENV CASSANDRA_CONFIG /etc/cassandra
 
+COPY users_keyspace.sql /tmp/users_keyspace.sql
 COPY docker-entrypoint.sh /docker-entrypoint.sh
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 RUN mkdir -p /var/lib/cassandra "$CASSANDRA_CONFIG" \
@@ -41,7 +43,16 @@ RUN mkdir -p /var/lib/cassandra "$CASSANDRA_CONFIG" \
 	&& chmod 777 /var/lib/cassandra "$CASSANDRA_CONFIG"
 VOLUME /var/lib/cassandra
 
-# ADD users_keyspace.sql /tmp/users_keyspace.sql
+
+# RUN mkdir -p /home/cassandra/.cassandra && chown cassandra:cassandra /home/cassandra -R
+# USER cassandra
+# ENV CASSANDRA_CLUSTER_NAME dal05
+# ENV CASSANDRA_DC dal05
+# ENV CASSANDRA_RACK rac1
+# ENV CASSANDRA_ENDPOINT_SNITCH GossipingPropertyFileSnitch
+# RUN /docker-entrypoint.sh "/usr/sbin/cassandra" && sleep 10s && cqlsh -f /tmp/users_keyspace.sql
+
+
 # RUN cqlsh -f /tmp/users_keyspace.sql
 
 # 7000: intra-node communication
@@ -50,5 +61,5 @@ VOLUME /var/lib/cassandra
 # 9042: CQL
 # 9160: thrift service
 EXPOSE 7000 7001 7199 9042 9160
-CMD ["cassandra", "-f"]
+CMD ["cassandra","-f"]
 # CMD ["/bin/bash"]
