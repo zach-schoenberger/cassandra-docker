@@ -60,5 +60,24 @@ if [ "$1" = 'cassandra' ]; then
 	done
 fi
 
+set -x 
+
+cp -rf /tmp/data /var/lib/cassandra
+
+
+# # gosu cassandra cassandra
+# cassandra
+
+# sleep 30s
+
+# for initSql in "$INIT_SQLS"; do
+# 	echo "cqlsh -f /tmp/$initSql"
+# 	cqlsh -f /tmp/$initSql
+# done
+
+# pid=`ps -ef | grep java | grep cassandra| awk '{print $2}'`
+
+# kill -9 $pid
+
 exec "$@"
 

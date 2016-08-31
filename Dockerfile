@@ -20,9 +20,10 @@ RUN set -x \
 
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 514A2AD631A57A16DD0047EC749D6EEC0353B12C
 
-RUN echo 'deb http://www.apache.org/dist/cassandra/debian 33x main' >> /etc/apt/sources.list.d/cassandra.list
+# RUN echo 'deb http://www.apache.org/dist/cassandra/debian 33x main' >> /etc/apt/sources.list.d/cassandra.list
+RUN echo 'deb http://www.apache.org/dist/cassandra/debian 12x main' >> /etc/apt/sources.list.d/cassandra.list
 
-ENV CASSANDRA_VERSION 3.3
+ENV CASSANDRA_VERSION 1.2.19
 
 RUN apt-get update \
 	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
@@ -33,7 +34,8 @@ RUN sed -ri 's/^(JVM_PATCH_VERSION)=.*/\1=25/' /etc/cassandra/cassandra-env.sh
 
 ENV CASSANDRA_CONFIG /etc/cassandra
 
-COPY users_keyspace.sql /tmp/users_keyspace.sql
+COPY initSqls/1.2/* /tmp
+COPY ./data/1.2/* /tmp/data/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
